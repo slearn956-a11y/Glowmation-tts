@@ -1,42 +1,4 @@
-<!DOCTYPE html>
-<html lang="hi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoiceForge AI Studio</title>
-    <style>
-        :root { --bg: #0a0a0c; --surface: #16161a; --surface2: #232329; --accent: #4f46e5; --text: #e2e8f0; --muted: #94a3b8; --border: #2d2d35; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .card { background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        .field { margin-bottom: 1.5rem; }
-        input, textarea, select { width: 100%; padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: white; margin-top: 8px; box-sizing: border-box; }
-        .btn-generate { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .btn-generate:hover { opacity: 0.9; transform: translateY(-2px); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .badge { background: #1e1b4b; color: #818cf8; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid #3730a3; }
-        #adminPanel { border: 1px solid #f59e0b; padding: 15px; border-radius: 15px; margin-bottom: 20px; display: none; background: rgba(245, 158, 11, 0.05); }
-    </style>
-</head>
-<body>
-
-<div id="authContainer" class="card">
-    <h2 style="text-align:center; margin-bottom:1.5rem;">VoiceForge Login</h2>
-    <div class="field">
-        <input type="email" id="userEmail" placeholder="Email Address">
-        <input type="password" id="userPass" placeholder="Password">
-    </div>
-    <button class="btn-generate" onclick="handleAuth('login')">Login</button>
-    <button class="btn-generate" style="margin-top:10px; background:transparent; border:1px solid var(--accent);" onclick="handleAuth('signup')">Sign Up</button>
-</div>
-
-<div id="mainApp" class="card" style="display:none;">
-    <div class="header">
-        <div style="font-weight:bold; font-size:1.2rem;">VoiceForge AI</div>
-        <div id="userCredits" class="badge">Credits: 0</div>
-    </div>
-
-    <div id="adminPanel">
-        <div style="color:#f59e0b; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">ADMIN PANEL // NAMAN</div>
+r:#f59e0b; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">ADMIN PANEL // NAMAN</div>
         <input type="text" id="voiceName" placeholder="Voice Name (e.g. Cinematic Deep)">
         <input type="text" id="voiceUrl" placeholder="Audio File Ka Direct Link Yahan Daal">
         <button class="btn-generate" style="background:#f59e0b; color:black; margin-top:10px;" onclick="publishVoice()">Publish Voice</button>
@@ -253,6 +215,196 @@
         }
     };
 
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceForge AI Studio</title>
+    <style>
+        :root { --bg: #0a0a0c; --surface: #16161a; --surface2: #232329; --accent: #4f46e5; --text: #e2e8f0; --muted: #94a3b8; --border: #2d2d35; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { background: var(--surface); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 450px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .field { margin-bottom: 1.5rem; }
+        input, textarea, select { width: 100%; padding: 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: white; margin-top: 8px; box-sizing: border-box; }
+        .btn-generate { width: 100%; padding: 14px; background: var(--accent); border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-generate:hover { opacity: 0.9; transform: translateY(-2px); }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .badge { background: #1e1b4b; color: #818cf8; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid #3730a3; }
+        #adminPanel { border: 1px solid #f59e0b; padding: 15px; border-radius: 15px; margin-bottom: 20px; display: none; background: rgba(245, 158, 11, 0.05); }
+    </style>
+</head>
+<body>
+
+<div id="authContainer" class="card">
+    <h2 style="text-align:center; margin-bottom:1.5rem;">VoiceForge Login</h2>
+    <div class="field">
+        <input type="email" id="userEmail" placeholder="Email Address">
+        <input type="password" id="userPass" placeholder="Password">
+    </div>
+    <button class="btn-generate" onclick="handleAuth('login')">Login</button>
+    <button class="btn-generate" style="margin-top:10px; background:transparent; border:1px solid var(--accent);" onclick="handleAuth('signup')">Sign Up</button>
+</div>
+
+<div id="mainApp" class="card" style="display:none;">
+    <div class="header">
+        <div style="font-weight:bold; font-size:1.2rem;">VoiceForge AI</div>
+        <div id="userCredits" class="badge">Credits: 0</div>
+    </div>
+
+    <div id="adminPanel">
+        <div style="color:#f59e0b; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">ADMIN PANEL // NAMAN</div>
+        <input type="text" id="voiceName" placeholder="Voice Name (e.g. Cinematic Deep)">
+        <input type="text" id="voiceUrl" placeholder="Audio File Ka Direct Link Yahan Daal">
+        <button class="btn-generate" style="background:#f59e0b; color:black; margin-top:10px;" onclick="publishVoice()">Publish Voice</button>
+    </div>
+
+    <div class="field">
+        <select id="voiceSelect"><option value="">Loading Voices...</option></select>
+        <textarea id="textInput" rows="4" placeholder="Type script here..."></textarea>
+    </div>
+    <button class="btn-generate" onclick="generateAudio()">Generate (100 Credits)</button>
+    <div id="audioArea" style="margin-top:20px; display:none;">
+        <audio id="player" controls style="width:100%"></audio>
+    </div>
+    <button onclick="logout()" style="background:none; border:none; color:var(--muted); width:100%; margin-top:20px; cursor:pointer;">Logout</button>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNEVQwa-QkPwXJu3x8eMWhVOamE4tcbCw",
+        authDomain: "voiceforge-auth.firebaseapp.com",
+        projectId: "voiceforge-auth",
+        storageBucket: "voiceforge-auth.firebasestorage.app",
+        messagingSenderId: "849918994612",
+        appId: "1:849918994612:web:367b0b6533dcfc7a9c8fe1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const ADMIN_EMAIL = "slearn956@gmail.com";
+
+    window.handleAuth = async (type) => {
+        const email = document.getElementById('userEmail').value;
+        const pass = document.getElementById('userPass').value;
+        if(!email || !pass) return alert("Bhai, dono dabbe bharna zaroori hai!");
+        try {
+            if(type === 'signup') {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), { email, credits: 50000 });
+            } else { 
+                await signInWithEmailAndPassword(auth, email, pass); 
+            }
+        } catch (e) { 
+            alert("Login Error: " + e.message); 
+        }
+    };
+
+    window.logout = () => signOut(auth);
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            if(user.email === ADMIN_EMAIL) document.getElementById('adminPanel').style.display = 'block';
+            
+            onSnapshot(doc(db, "users", user.uid), (d) => {
+                document.getElementById('userCredits').innerText = user.email === ADMIN_EMAIL ? "Unlimited Admin" : `Credits: ${d.data()?.credits || 0}`;
+            });
+            loadVoices();
+        } else {
+            document.getElementById('authContainer').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+    });
+
+    function loadVoices() {
+        onSnapshot(collection(db, "voices"), (snap) => {
+            const s = document.getElementById('voiceSelect');
+            s.innerHTML = '';
+            snap.forEach(v => {
+                let o = document.createElement('option');
+                o.value = v.data().url; o.innerText = v.data().name; s.appendChild(o);
+            });
+        });
+    }
+
+    window.publishVoice = async () => {
+        const name = document.getElementById('voiceName').value;
+        const url = document.getElementById('voiceUrl').value;
+        if(name && url) {
+            await addDoc(collection(db, "voices"), { name, url });
+            alert("✅ Voice Published! Ab ye sabko dikhegi.");
+            document.getElementById('voiceName').value = '';
+            document.getElementById('voiceUrl').value = '';
+        } else {
+            alert("Bhai, Naam aur Audio URL dono daalna zaroori hai!");
+        }
+    };
+
+    window.generateAudio = async () => {
+        const user = auth.currentUser;
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        
+        if(user.email !== ADMIN_EMAIL && userDoc.data().credits < 100) return alert("Credits khatam!");
+
+        const text = document.getElementById('textInput').value;
+        const voiceUrl = document.getElementById('voiceSelect').value;
+
+        if(!text || !voiceUrl) return alert("Script likh aur Voice select kar!");
+
+        const btn = document.querySelector('button[onclick="generateAudio()"]');
+        btn.innerText = "⏳ Generating Asli Voice...";
+
+        try {
+            const response = await fetch("https://namanrai-glowmation-tts-api.hf.space/run/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    data: [ text, voiceUrl ]
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error("Server ne block kiya: " + response.status + " " + errText);
+            }
+
+            const result = await response.json();
+            const audioData = result.data[0]; 
+            
+            const player = document.getElementById('player');
+            document.getElementById('audioArea').style.display = 'block';
+            
+            if (typeof audioData === 'string') {
+                player.src = audioData;
+            } else if (audioData && audioData.name) {
+                player.src = "https://namanrai-glowmation-tts-api.hf.space/file=" + audioData.name;
+            } else if (audioData && audioData.url) {
+                player.src = audioData.url;
+            } else {
+                throw new Error("Audio ka format alag hai: " + JSON.stringify(audioData));
+            }
+            
+            player.play();
+
+            if(user.email !== ADMIN_EMAIL) await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
+            btn.innerText = "Generate (100 Credits)";
+
+        } catch (error) {
+            console.error(error);
+            alert("❌ Asli Engine Fail Hua! Error: " + error.message);
+            btn.innerText = "Generate (100 Credits)";
+        }
+    };
 </script>
 </body>
 </html>
