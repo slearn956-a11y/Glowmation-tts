@@ -127,17 +127,61 @@
         }
     };
 
-    window.generateAudio = async () => {
+        window.generateAudio = async () => {
         const user = auth.currentUser;
         const userDoc = await getDoc(doc(db, "users", user.uid));
-        if(user.email !== ADMIN_EMAIL && userDoc.data().credits < 100) return alert("Credits khatam!");
         
-        alert("Processing... Backend connecting to HuggingFace");
-        
-        if(user.email !== ADMIN_EMAIL) {
-            await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
+        // 1. Credit Check
+        if(user.email !== ADMIN_EMAIL && userDoc.data().credits < 100) {
+            return alert("Bhai, Credits khatam ho gaye!");
+        }
+
+        const text = document.getElementById('textInput').value;
+        const voiceUrl = document.getElementById('voiceSelect').value;
+
+        if(!text || !voiceUrl) return alert("Bhai, script likh aur voice select kar!");
+
+        const btn = document.querySelector('button[onclick="generateAudio()"]');
+        btn.innerText = "⏳ Generating Voice... (Wait)";
+
+        try {
+            // 2. ASLI ENGINE (Hugging Face API Call)
+            const response = await fetch("https://namanrai-glowmation-tts-api.hf.space/api/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    data: [ text, voiceUrl ] // Script aur reference audio ka link
+                })
+            });
+
+            const result = await response.json();
+
+            // 3. Audio Playback
+            const audioData = result.data[0]; 
+            const player = document.getElementById('player');
+            document.getElementById('audioArea').style.display = 'block';
+            
+            // Hugging Face ke audio format ko handle karna
+            if (audioData && audioData.name) {
+                player.src = "https://namanrai-glowmation-tts-api.hf.space/file=" + audioData.name;
+            } else {
+                player.src = audioData;
+            }
+            player.play();
+
+            // 4. Credits Kaato (Agar Naman nahi hai)
+            if(user.email !== ADMIN_EMAIL) {
+                await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
+            }
+            btn.innerText = "Generate (100 Credits)";
+
+        } catch (error) {
+            console.error(error);
+            alert("Error aagaya! Ya toh HF server sleep mode mein hai, ya code mein dikkat hai.");
+            btn.innerText = "Generate (100 Credits)";
         }
     };
+
 </script>
 </body>
 </html>
