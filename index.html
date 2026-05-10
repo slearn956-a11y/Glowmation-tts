@@ -37,8 +37,8 @@
 
     <div id="adminPanel">
         <div style="color:#f59e0b; font-size:0.8rem; font-weight:bold; margin-bottom:10px;">ADMIN PANEL // NAMAN</div>
-        <input type="text" id="voiceName" placeholder="Voice Name">
-        <input type="text" id="voiceUrl" placeholder="HuggingFace URL">
+        <input type="text" id="voiceName" placeholder="Voice Name (e.g. Cinematic Deep)">
+        <input type="text" id="voiceUrl" placeholder="Audio File Ka Direct Link Yahan Daal">
         <button class="btn-generate" style="background:#f59e0b; color:black; margin-top:10px;" onclick="publishVoice()">Publish Voice</button>
     </div>
 
@@ -93,7 +93,7 @@
             if(user.email === ADMIN_EMAIL) document.getElementById('adminPanel').style.display = 'block';
             
             onSnapshot(doc(db, "users", user.uid), (d) => {
-                document.getElementById('userCredits').innerText = user.email === ADMIN_EMAIL ? "Unlimited Admin" : `Credits: ${d.data().credits}`;
+                document.getElementById('userCredits').innerText = user.email === ADMIN_EMAIL ? "Unlimited Admin" : `Credits: ${d.data()?.credits || 0}`;
             });
             loadVoices();
         } else {
@@ -113,12 +113,17 @@
         });
     }
 
+    // DIRECT URL PUBLISH LOGIC
     window.publishVoice = async () => {
         const name = document.getElementById('voiceName').value;
         const url = document.getElementById('voiceUrl').value;
         if(name && url) {
             await addDoc(collection(db, "voices"), { name, url });
-            alert("Voice Published!");
+            alert("✅ Voice Published! Ab ye sabko dikhegi.");
+            document.getElementById('voiceName').value = '';
+            document.getElementById('voiceUrl').value = '';
+        } else {
+            alert("Bhai, Naam aur Audio URL dono daalna zaroori hai!");
         }
     };
 
@@ -127,9 +132,8 @@
         const userDoc = await getDoc(doc(db, "users", user.uid));
         if(user.email !== ADMIN_EMAIL && userDoc.data().credits < 100) return alert("Credits khatam!");
         
-        // --- Gradio/HF API Logic Calling Your Space ---
         alert("Processing... Backend connecting to HuggingFace");
-        // Yahan pichla fetch logic call hoga
+        
         if(user.email !== ADMIN_EMAIL) {
             await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
         }
