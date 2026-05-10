@@ -120,80 +120,132 @@
         if(name && url) {
             await addDoc(collection(db, "voices"), { name, url });
             alert("✅ Voice Published! Ab ye sabko dikhegi.");
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    
+    // 🔥 NAYA VIP PASS: Hugging Face ka Official Client
+    import { client } from "https://cdn.jsdelivr.net/npm/@gradio/client/dist/index.min.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNEVQwa-QkPwXJu3x8eMWhVOamE4tcbCw",
+        authDomain: "voiceforge-auth.firebaseapp.com",
+        projectId: "voiceforge-auth",
+        storageBucket: "voiceforge-auth.firebasestorage.app",
+        messagingSenderId: "849918994612",
+        appId: "1:849918994612:web:367b0b6533dcfc7a9c8fe1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const ADMIN_EMAIL = "slearn956@gmail.com";
+
+    window.handleAuth = async (type) => {
+        const email = document.getElementById('userEmail').value;
+        const pass = document.getElementById('userPass').value;
+        if(!email || !pass) return alert("Details bhariye!");
+        try {
+            if(type === 'signup') {
+                const res = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", res.user.uid), { email, credits: 50000 });
+            } else { await signInWithEmailAndPassword(auth, email, pass); }
+        } catch (e) { alert(e.message); }
+    };
+
+    window.logout = () => signOut(auth);
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            if(user.email === ADMIN_EMAIL) document.getElementById('adminPanel').style.display = 'block';
+            
+            onSnapshot(doc(db, "users", user.uid), (d) => {
+                document.getElementById('userCredits').innerText = user.email === ADMIN_EMAIL ? "Unlimited Admin" : `Credits: ${d.data()?.credits || 0}`;
+            });
+            loadVoices();
+        } else {
+            document.getElementById('authContainer').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+    });
+
+    function loadVoices() {
+        onSnapshot(collection(db, "voices"), (snap) => {
+            const s = document.getElementById('voiceSelect');
+            s.innerHTML = '';
+            snap.forEach(v => {
+                let o = document.createElement('option');
+                o.value = v.data().url; o.innerText = v.data().name; s.appendChild(o);
+            });
+        });
+    }
+
+    window.publishVoice = async () => {
+        const name = document.getElementById('voiceName').value;
+        const url = document.getElementById('voiceUrl').value;
+        if(name && url) {
+            await addDoc(collection(db, "voices"), { name, url });
+            alert("✅ Voice Published!");
             document.getElementById('voiceName').value = '';
             document.getElementById('voiceUrl').value = '';
-        } else {
-            alert("Bhai, Naam aur Audio URL dono daalna zaroori hai!");
         }
     };
 
-            window.generateAudio = async () => {
+    window.generateAudio = async () => {
         const user = auth.currentUser;
         const userDoc = await getDoc(doc(db, "users", user.uid));
         
-        // 1. Credit Check
-        if(user.email !== ADMIN_EMAIL && userDoc.data().credits < 100) {
-            return alert("Bhai, Credits khatam ho gaye!");
-        }
+        if(user.email !== ADMIN_EMAIL && userDoc.data().credits < 100) return alert("Bhai, Credits khatam!");
 
         const text = document.getElementById('textInput').value;
         const voiceUrl = document.getElementById('voiceSelect').value;
 
-        if(!text) return alert("Bhai, pehle script toh likh!");
+        if(!text || !voiceUrl) return alert("Script likh aur Voice select kar!");
 
         const btn = document.querySelector('button[onclick="generateAudio()"]');
-        btn.innerText = "⏳ Generating Voice... (Wait)";
+        btn.innerText = "⏳ Generating Animation Voice...";
 
         try {
-            // 🚀 MAIN ENGINE: Hugging Face API Call
-            const response = await fetch("https://namanrai-glowmation-tts-api.hf.space/api/predict", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    data: [ text, voiceUrl ] 
-                })
-            });
+            // 🚀 ASLI ENGINE (Hugging Face VIP Client)
+            const hfApp = await client("namanrai/glowmation-tts-api");
+            
+            const result = await hfApp.predict("/predict", [
+                text, 
+                voiceUrl 
+            ]);
 
-            if (!response.ok) throw new Error("Main Engine Server Blocked");
-
-            const result = await response.json();
+            // Audio Playback
             const audioData = result.data[0]; 
             const player = document.getElementById('player');
             document.getElementById('audioArea').style.display = 'block';
             
-            player.src = (audioData && audioData.name) ? "https://namanrai-glowmation-tts-api.hf.space/file=" + audioData.name : audioData;
+            // Naya HF Client audio ka direct URL nikal kar deta hai
+            player.src = audioData.url || audioData; 
             player.play();
 
             if(user.email !== ADMIN_EMAIL) await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
             btn.innerText = "Generate (100 Credits)";
 
         } catch (error) {
-            console.warn("Main Engine API Error:", error);
-            
-            // 🔄 AUTO-SWITCH (FALLBACK MECHANISM)
-            alert("⚠️ Main Engine down hai! Auto-Switching to Backup Engine...");
+            console.warn("Main Engine Error:", error);
+            alert("⚠️ Main Engine slow hai! Auto-Switching to Backup Engine...");
             
             try {
-                // BACKUP ENGINE: Browser Native TTS (100% Reliable, No Server Needed)
+                // 🔄 AUTO-SWITCH (Tere mast fallback ke liye)
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'hi-IN'; // Hindi accent ke liye
-                
-                // Play backup audio
+                utterance.lang = 'hi-IN';
                 window.speechSynthesis.speak(utterance);
-                
-                // Audio tag chupa do kyunki native TTS direct play hota hai
                 document.getElementById('audioArea').style.display = 'none'; 
-                
                 if(user.email !== ADMIN_EMAIL) await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
                 btn.innerText = "Generate (100 Credits)";
-
-            } catch (fallbackError) {
-                alert("❌ Bhai, dono engine fail ho gaye. System restart kar.");
+            } catch (e) {
                 btn.innerText = "Generate (100 Credits)";
             }
         }
     };
-
 </script>
 </body>
 </html>
