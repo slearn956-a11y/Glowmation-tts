@@ -127,7 +127,7 @@
         }
     };
 
-        window.generateAudio = async () => {
+            window.generateAudio = async () => {
         const user = auth.currentUser;
         const userDoc = await getDoc(doc(db, "users", user.uid));
         
@@ -139,46 +139,58 @@
         const text = document.getElementById('textInput').value;
         const voiceUrl = document.getElementById('voiceSelect').value;
 
-        if(!text || !voiceUrl) return alert("Bhai, script likh aur voice select kar!");
+        if(!text) return alert("Bhai, pehle script toh likh!");
 
         const btn = document.querySelector('button[onclick="generateAudio()"]');
         btn.innerText = "⏳ Generating Voice... (Wait)";
 
         try {
-            // 2. ASLI ENGINE (Hugging Face API Call)
+            // 🚀 MAIN ENGINE: Hugging Face API Call
             const response = await fetch("https://namanrai-glowmation-tts-api.hf.space/api/predict", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    data: [ text, voiceUrl ] // Script aur reference audio ka link
+                    data: [ text, voiceUrl ] 
                 })
             });
 
-            const result = await response.json();
+            if (!response.ok) throw new Error("Main Engine Server Blocked");
 
-            // 3. Audio Playback
+            const result = await response.json();
             const audioData = result.data[0]; 
             const player = document.getElementById('player');
             document.getElementById('audioArea').style.display = 'block';
             
-            // Hugging Face ke audio format ko handle karna
-            if (audioData && audioData.name) {
-                player.src = "https://namanrai-glowmation-tts-api.hf.space/file=" + audioData.name;
-            } else {
-                player.src = audioData;
-            }
+            player.src = (audioData && audioData.name) ? "https://namanrai-glowmation-tts-api.hf.space/file=" + audioData.name : audioData;
             player.play();
 
-            // 4. Credits Kaato (Agar Naman nahi hai)
-            if(user.email !== ADMIN_EMAIL) {
-                await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
-            }
+            if(user.email !== ADMIN_EMAIL) await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
             btn.innerText = "Generate (100 Credits)";
 
         } catch (error) {
-            console.error(error);
-            alert("Error aagaya! Ya toh HF server sleep mode mein hai, ya code mein dikkat hai.");
-            btn.innerText = "Generate (100 Credits)";
+            console.warn("Main Engine API Error:", error);
+            
+            // 🔄 AUTO-SWITCH (FALLBACK MECHANISM)
+            alert("⚠️ Main Engine down hai! Auto-Switching to Backup Engine...");
+            
+            try {
+                // BACKUP ENGINE: Browser Native TTS (100% Reliable, No Server Needed)
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'hi-IN'; // Hindi accent ke liye
+                
+                // Play backup audio
+                window.speechSynthesis.speak(utterance);
+                
+                // Audio tag chupa do kyunki native TTS direct play hota hai
+                document.getElementById('audioArea').style.display = 'none'; 
+                
+                if(user.email !== ADMIN_EMAIL) await updateDoc(doc(db, "users", user.uid), { credits: userDoc.data().credits - 100 });
+                btn.innerText = "Generate (100 Credits)";
+
+            } catch (fallbackError) {
+                alert("❌ Bhai, dono engine fail ho gaye. System restart kar.");
+                btn.innerText = "Generate (100 Credits)";
+            }
         }
     };
 
